@@ -367,32 +367,4 @@ body {
     .key-findings {
         padding: 15px;
     }
-    
-    /* Mobile: Show static images instead of interactive dashboards */
-    .tableauViz {
-        display: none !important;
-    }
-    
-    .tableauPlaceholder noscript {
-        display: block !important;
-    }
-    
-    .tableauPlaceholder noscript img {
-        width: 100%;
-        height: auto;
-        max-width: none;
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-    }
-    
-    /* Add scrollable container for dashboard images on mobile */
-    .dashboard-container {
-        overflow-x: auto;
-        overflow-y: hidden;
-    }
-    
-    .tableauPlaceholder {
-        min-width: 800px; /* Ensure dashboards maintain their designed width */
-        overflow: visible;
-    }
 }
