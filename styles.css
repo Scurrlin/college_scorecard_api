@@ -322,7 +322,7 @@ body {
 }
 
 /* Mobile Optimizations */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     body {
         font-size: 0.9em;
         line-height: 1.6;
@@ -366,5 +366,21 @@ body {
     
     .key-findings {
         padding: 15px;
+    }
+    
+    /* Hide interactive Tableau dashboards on mobile */
+    .tableauViz {
+        display: none !important;
+    }
+    
+    /* Show static images on mobile */
+    .tableauPlaceholder noscript {
+        display: block !important;
+    }
+    
+    .tableauPlaceholder noscript img {
+        width: 100%;
+        height: auto;
+        border-radius: 0 0 8px 8px;
     }
 }
