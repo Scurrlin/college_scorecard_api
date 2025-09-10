@@ -322,7 +322,7 @@ body {
 }
 
 /* Mobile Optimizations */
-@media (max-width: 480px) {
+@media (max-width: 450px) {
     body {
         font-size: 0.9em;
         line-height: 1.6;
@@ -376,11 +376,16 @@ body {
     /* Show static images on mobile */
     .tableauPlaceholder noscript {
         display: block !important;
+        height: 500px;
+        overflow: auto;
+        border-radius: 0 0 8px 8px;
     }
     
     .tableauPlaceholder noscript img {
-        width: 100%;
+        width: auto;
         height: auto;
-        border-radius: 0 0 8px 8px;
+        min-width: 800px;
+        display: block;
+        border-radius: 0;
     }
 }
