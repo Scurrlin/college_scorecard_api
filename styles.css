@@ -392,5 +392,6 @@ body {
         min-width: 800px;
         display: block;
         border-radius: 0;
+        vertical-align: top;
     }
 }
