@@ -381,7 +381,7 @@ body {
     /* Show static images on mobile */
     .mobile-static-image {
         display: block !important;
-        height: 500px;
+        height: 727px;
         overflow: auto;
         border-radius: 0 0 8px 8px;
     }
