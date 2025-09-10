@@ -10,7 +10,7 @@ This report uses data from the U.S. Department of Education's College Scorecard 
 - **Manhattan School of Music**
 - **Curtis Institute of Music**
 
-## 📊 **[View Report →](./index.html)**
+## 📊 **[View Report →](https://scurrlin.github.io/cost_of_virtuosity/)**
 
 ![Dashboard Preview](https://public.tableau.com/static/images/Ac/AcceptanceDash/AcceptanceDash/1.png)
 
@@ -18,7 +18,7 @@ This report uses data from the U.S. Department of Education's College Scorecard 
 
 The `scorecard_api.py` script:
 
-1. **Fetches Data**: Connects to the College Scorecard API using your API key
+1. **Fetches Data**: Connects to the College Scorecard API
 2. **Processes Metrics**: Collects enrollment, admission rates, retention, graduation rates, and tuition cost data
 3. **Exports Results**: Creates both long and wide format CSV files for analysis
 
@@ -33,9 +33,9 @@ The `scorecard_api.py` script:
 ## 🚀 Quick Start
 
 1. **Get API Key**: Register at [api.data.gov](https://api.data.gov/signup) 
-2. **Set Environment**: Create `.env` file with `SCORECARD_API_KEY=your_key_here`
-3. **Install Dependencies**: `pip install requests pandas python-dotenv`
-4. **Run Script**: `python scorecard_api.py`
+2. **Set Environment Variable**: Create `.env` file with `SCORECARD_API_KEY=your_key_here`
+3. **Install Dependencies**: `pip3 install requests pandas python-dotenv`
+4. **Run Script**: `python3 scorecard_api.py`
 
 ## 📁 Output Files
 
