@@ -320,3 +320,30 @@ body {
 .portfolio-icon:hover img {
     filter: brightness(0) saturate(100%) invert(47%) sepia(94%) saturate(1318%) hue-rotate(184deg) brightness(98%) contrast(93%);
 }
+
+/* Mobile Landscape Mode Optimizations */
+@media screen and (max-height: 450px) and (min-width: 600px) and (orientation: landscape) {
+    .dashboard-container {
+        margin: 15px 0;
+        border-radius: 4px;
+    }
+    
+    .dashboard-header {
+        padding: 10px 15px;
+    }
+    
+    .dashboard-header h4 {
+        font-size: 1em;
+    }
+    
+    /* Ensure Tableau dashboards use full available width */
+    .tableauPlaceholder {
+        width: 100% !important;
+        max-width: none !important;
+    }
+    
+    .tableauViz {
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
