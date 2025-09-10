@@ -1,0 +1,1443 @@
+<!-- Run locally with "open index.html" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cost of Virtuosity</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/logo.png">
+    
+    <!-- Meta tags for preview cards -->
+    <meta name="description" content="Cost of Virtuosity">
+    <meta property="og:title" content="Cost of Virtuosity">
+    <meta property="og:description" content="Cost of Virtuosity">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://public.tableau.com/static/images/Ac/AcceptanceDash/AcceptanceDash/1.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cost of Virtuosity">
+    <meta name="twitter:description" content="Cost of Virtuosity">
+    <meta name="twitter:image" content="https://public.tableau.com/static/images/Ac/AcceptanceDash/AcceptanceDash/1.png">
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>The Cost of Virtuosity</h1>
+            <div class="subtitle">Exploring Enrollment and Financial Trends in Elite U.S. Music Schools (2012–2022)</div>
+        </div>
+        
+        <div class="content">
+            <!-- Overture -->
+            <section class="section">
+                <h2>Overture</h2>
+                <div class="overture">
+                    <p>Music education, much like the rest of the country, has changed dramatically over the past decade. Using data pulled from the U.S. Department of Education's College Scorecard API, this comprehensive analysis examines emerging enrollment and financial trends within five of the most prestigious music conservatories in the United States from 2012 to 2022. This specific date range was chosen as it is the most recent 10-year span with complete data sets for all five institutions.</p>
+                    
+                    <p>The schools selected for this study were Berklee College of Music, The Juilliard School, New England Conservatory, Manhattan School of Music, and the Curtis Institute of Music. Each of these institutions has reached the peak of at least one aspect of classical and/or contemporary music education while maintaining a unique identity and focus.</p>
+                    
+                    <p>Through interactive visualizations and data-driven insights, this report seeks to illuminate the complex relationships between hyper-competitive admissions practices, retention, graduation outcomes, and financial accessibility at the pinnacle of music education. These findings offer valuable perspectives for anyone truly invested in the future of American conservatories.</p>
+                </div>
+            </section>
+
+            <!-- Table of Contents -->
+            <div class="toc">
+                <h2>Table of Contents</h2>
+                <ul>
+                    <li><a href="#section1">1. Introduction & Methodology</a></li>
+                    <li><a href="#section2">2. Student Outcomes</a>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><a href="#section2-acceptance">2.1 Acceptance Rates</a></li>
+                            <li><a href="#section2-retention">2.2 Retention Rates</a></li>
+                            <li><a href="#section2-graduation">2.3 Graduation Rates</a></li>
+                            <li><a href="#section2-4">2.4 Individual School Outcomes</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#section3">3. Cost Comparisons</a>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><a href="#section3-tuition">3.1 Tuition Trends</a></li>
+                            <li><a href="#section3-netprice">3.2 Net Price Analysis</a></li>
+                            <li><a href="#section3-3">3.3 Individual School Costs</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#section4">4. Enrollment Analysis</a></li>
+                    <li><a href="#section5">5. Conclusions & Implications</a></li>
+                </ul>
+            </div>
+
+            <!-- Section 1: Introduction & Methodology -->
+            <section id="section1" class="section">
+                <h2>1. Introduction & Methodology</h2>
+                
+                <p>As previously stated, this analysis uses the U.S. Department of Education's College Scorecard API to examine longitudinal trends across five elite music conservatories. The specific metrics below were chosen to provide an unbiased representation of how costs and enrollment have changed from 2012 to 2022.</p>
+
+                <div class="methodology">
+                    <h4>Data Collection</h4>
+                    
+                    <p>I used a custom Python script <strong>(scorecard_api.py)</strong> to extract the following data for all five institutions. You can view the code for said script by clicking the button below.</p>
+                    
+                    <ul>
+                        <li><strong>Acceptance Rate:</strong> The percentage of applicants who were admitted in a given year (admissions.admission_rate.overall).</li>
+                        <br>
+                        <li><strong>Retention Rate:</strong> The share of first-time, full-time undergraduates who return the following year (student.retention_rate.four_year.full_time).</li>
+                        <br>
+                        <li><strong>Graduation Rate:</strong> The proportion of full-time, first-time undergraduates who complete a degree within 6 years (completion.completion_rate_4yr_150nt).</li>
+                        <br>
+                        <li><strong>Tuition:</strong> The published in-state tuition and fees for full-time undergraduates (cost.tuition.in_state).</li>
+                        <br>
+                        <li><strong>Average Net Price:</strong> The average annual cost of attendance for full-time undergraduates after grants and scholarships (cost.avg_net_price.private).</li>
+                        <br>
+                        <li><strong>Total Enrollment:</strong> The number of students enrolled for credit at the institution across all programs (student.size).</li>
+                    </ul>
+                    
+                    <details class="code-section">
+                        <summary>📄 View Data Collection Script (scorecard_api.py)</summary>
+                        <pre><code class="language-python">import os
+import requests
+import pandas as pd
+from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API = "https://api.data.gov/ed/collegescorecard/v1/schools"
+API_KEY = os.getenv("SCORECARD_API_KEY")
+UNITIDS = [164748, 192110, 167057, 192712, 211893]
+YEARS = list(range(2012, 2022 + 1))
+
+NAME_MAP = {
+    164748: "Berklee College of Music",
+    192110: "The Juilliard School",
+    167057: "New England Conservatory",
+    192712: "Manhattan School of Music",
+    211893: "Curtis Institute of Music",
+}
+
+FIELD_MAP = {
+    "enrollment_total": "student.size",
+    "admission_rate": "admissions.admission_rate.overall",
+    "retention_rate_ft": "student.retention_rate.four_year.full_time",
+    "grad_rate_150": "completion.completion_rate_4yr_150nt",
+
+    # Published tuition + required fees only (no room/board) 
+    "tuition_fees": "cost.tuition.in_state",
+
+    # What families actually pay:
+    # (Tuition + Room/Board + Books + Personal) - (Federal + State + Institutional grants)
+    "avg_net_price": "cost.avg_net_price.private",
+}
+
+def fetch_year(institution_ids, year):
+    fields = ["id", "school.name"]
+    fields += [f"{year}.{f}" for f in FIELD_MAP.values()]
+    params = {
+        "api_key": API_KEY,
+        "id__in": ",".join(map(str, institution_ids)),
+        "fields": ",".join(fields),
+        "per_page": 100
+    }
+    
+    try:
+        r = requests.get(API, params=params, timeout=30)
+        r.raise_for_status()
+        js = r.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching data for year {year}: {e}")
+        return pd.DataFrame()
+    except ValueError as e:
+        print(f"Error parsing JSON response for year {year}: {e}")
+        return pd.DataFrame()
+    
+    results = js.get("results", [])
+    if not results:
+        print(f"Warning: No data returned for year {year}")
+        return pd.DataFrame()
+    
+    rows = []
+    for item in results:
+        rid = item.get("id")
+        if not rid:
+            continue
+            
+        row = {
+            "institution": NAME_MAP.get(rid, item.get("school.name", "Unknown")),
+            "unitid": rid,
+            "year": year,
+        }
+
+        for metric, field_suffix in FIELD_MAP.items():
+            row[metric] = item.get(f"{year}.{field_suffix}")
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+def main():
+    frames = []
+    failed_years = []
+    
+    for y in YEARS:
+        df = fetch_year(UNITIDS, y)
+        if not df.empty:
+            frames.append(df)
+        else:
+            failed_years.append(y)
+    
+    if not frames:
+        raise SystemExit("Error: No data retrieved for any years. Check API key and network connection.")
+    
+    if failed_years:
+        print(f"Warning: Failed to retrieve data for years: {failed_years}")
+    
+    long_df = pd.concat(frames, ignore_index=True)
+    
+    if long_df.empty:
+        raise SystemExit("Error: No data to process after concatenation.")
+
+    # Convert select fields to percentages
+    percentage_fields = ["admission_rate", "retention_rate_ft", "grad_rate_150"]
+    for c in percentage_fields:
+        if c in long_df.columns:
+            s = pd.to_numeric(long_df[c], errors="coerce")
+            # Only convert if we have valid data and values are decimals
+            if s.notna().any():
+                valid_values = s[s.notna()]
+                if len(valid_values) > 0 and valid_values.max() <= 1.0 and valid_values.min() >= 0:
+                    # Convert to percentage and round to 2 decimal places
+                    long_df[c] = (s * 100).round(2)
+                else:
+                    # Already in percentage format, just round to 2 decimal places
+                    long_df[c] = s.round(2)
+
+    try:
+        wide_df = long_df.pivot_table(
+            index=["institution", "unitid", "year"],
+            values=list(FIELD_MAP.keys()),
+            aggfunc="first"
+        ).reset_index()
+    except Exception as e:
+        print(f"Warning: Error creating pivot table: {e}")
+        print("Proceeding with long format only.")
+        wide_df = None
+
+    # Generate filenames
+    year_range = f"{min(YEARS)}_{max(YEARS)}"
+    timestamp = datetime.now().strftime("%Y%m%d")
+    
+    long_filename = f"music_school_long_{year_range}_{timestamp}.csv"
+    wide_filename = f"music_school_wide_{year_range}_{timestamp}.csv"
+    
+    # Save files
+    long_df.to_csv(long_filename, index=False)
+    print(f"Saved long format: {long_filename} ({len(long_df)} rows, {len(long_df['institution'].unique())} institutions)")
+    
+    if wide_df is not None:
+        wide_df.to_csv(wide_filename, index=False)
+        print(f"Saved wide format: {wide_filename} ({len(wide_df)} rows)")
+    
+    return long_df, wide_df
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nOperation cancelled by user.")
+    except Exception as e:
+        print("Error: Operation failed. Check your API key and network connection.")
+        raise SystemExit(1)</code></pre>
+                    </details>
+                </div>
+
+                <p><em><strong>Note:</strong> Most of the above metrics focus on undergraduate programs as they represent the bulk of the student population at music schools. For the purposes of this analysis, retention and graduation rates track first-time, full-time undergraduate students, and net price calculations are also based on undergraduate costs.</em></p>
+
+                <h3>Institutional Profiles</h3>
+                <div class="school-grid">
+                    <div class="school-card">
+                        <h4>🎸 <a href="https://www.berklee.edu/" target="_blank" rel="noopener noreferrer">Berklee College of Music</a></h4>
+                        <div style="padding: 15px;">
+                            <p>A pioneer in contemporary music education, Berklee is a powerhouse that specializes in jazz, rock, pop, modern music production, and traditional classical studies.</p>
+                        </div>
+                    </div>
+                    <div class="school-card">
+                        <h4>🎭  <a href="https://www.juilliard.edu/" target="_blank" rel="noopener noreferrer">The Juilliard School</a></h4>
+                        <div style="padding: 15px;">
+                            <p>Fueled by its notoriously selective admissions process, Juilliard is arguably the most well-known traditional conservatory in classical music, dance, and drama.</p>
+                        </div>
+                    </div>
+                    <div class="school-card">
+                        <h4>🎻 <a href="https://necmusic.edu/" target="_blank" rel="noopener noreferrer">New England Conservatory</a></h4>
+                        <div style="padding: 15px;">
+                            <p>Aside from being the first conservatory to establish a fully accredited jazz studies program with Gunther Schuller in 1969, NEC is a historic institution that blends classical tradition with contemporary innovation.</p>
+                        </div>
+                    </div>
+                    <div class="school-card">
+                        <h4>🎺 <a href="https://www.msmnyc.edu/" target="_blank" rel="noopener noreferrer">Manhattan School of Music</a></h4>
+                        <div style="padding: 15px;">
+                            <p>From Harry Connick Jr. to Lady Gaga, MSM’s exceptional programs across all genres of music position it well to be a major player in music education for decades to come.</p>
+                        </div>
+                    </div>
+                    <div class="school-card">
+                        <h4>🎹 <a href="https://www.curtis.edu/" target="_blank" rel="noopener noreferrer">Curtis Institute of Music</a></h4>
+                        <div style="padding: 15px;">
+                            <p>With an ultra-selective admissions process that gives every accepted student a scholarship, Curtis proves that even smaller schools can have a tremendous impact on the industry.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Student Outcomes -->
+            <section id="section2" class="section">
+                <h2>2. Student Outcomes</h2>
+                
+                <p>Unlike traditional liberal arts institutions, elite music schools must balance artistic development with academic rigor. Music being an inherently individual pursuit means students will spend a significant amount of time studying and practicing on their own compared to students at more traditional colleges and universities. This solitude, combined with the fact that a student’s most important class is an hour-long weekly 1-on-1 lesson with their primary professor, creates a unique, high-pressure environment. This sustained pressure, exacerbated by the minimal prospects for economic stability after graduation (when compared to other degree programs), leads to increased volatility across retention and graduation metrics.</p>
+
+                <div class="key-findings">
+                    <h4>Key Findings Overview</h4>
+                    <ul>
+                        <li>Acceptance rates vary dramatically and are influenced significantly by reputation, application demand, and institutional philosophy.</li>
+                        <br>
+                        <li>Despite trends in acceptance rates being fairly stagnant across the board, all percentages are trending up in recent years. This coupled with flat or even declining enrollment (more on that later) indicates a possible downtrend in demand for elite music degrees.</li>
+                        <br>
+                        <li>Retention rates are very consistent for all schools, but there is a strong correlation between a low acceptance rate and high retention rate. <strong>To put it simply, the harder it is to get in, the more likely students are to come back.</strong></li>
+                        <br>
+                        <li>Graduation rates are all over the place with smaller schools having a wider variance. <strong>For example, Curtis went from a 100% graduation rate in 2013 to a 53.85% graduation rate in 2014.</strong></li>
+                        <br>
+                        <li>The 2022 snapshot provides further evidence that as acceptance rates go lower, retention and graduation rates go up.</li>
+                    </ul>
+                </div>
+
+                <!-- Acceptance Rate Dashboard -->
+                <div id="section2-acceptance" class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>📊 Acceptance Rates Across Institutions (2012-2022)</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276102353' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Acceptance Dash' 
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Ac&#47;AcceptanceDash&#47;AcceptanceDash&#47;1_rss.png' 
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> 
+                            <param name='embed_code_version' value='3' /> 
+                            <param name='site_root' value='' />
+                            <param name='name' value='AcceptanceDash&#47;AcceptanceDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Ac&#47;AcceptanceDash&#47;AcceptanceDash&#47;1.png' /> 
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276102353');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) { 
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) { 
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else { 
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <!-- Retention Rate Dashboard -->
+                <div id="section2-retention" class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>📊 Student Retention Rates</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276138501' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Retention Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Re&#47;RetentionDash_17572611858440&#47;RetentionDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='RetentionDash_17572611858440&#47;RetentionDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Re&#47;RetentionDash_17572611858440&#47;RetentionDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276138501');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <!-- Graduation Rate Dashboard -->
+                <div id="section2-graduation" class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>📊 Graduation Rates Analysis</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276208403' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Grad Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Gr&#47;GradDash&#47;GradDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz'  style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='GradDash&#47;GradDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Gr&#47;GradDash&#47;GradDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276208403');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+            </section>
+
+            <!-- Section 2.4: Individual School Outcomes -->
+            <section id="section2-4" class="section">
+                <h3>Student Outcomes for Individual Schools</h3>
+                
+                <p>The following dashboards show a snapshot of each school's acceptance rate, retention rate, and graduation rate for 2022.</p>
+
+                <div class="key-findings">
+                    <h4>Key Observations About Individual Schools</h4>
+                    <ul>
+                        <li><strong>Berklee:</strong> Large student populations can negatively affect outcome metrics even when an institution has a massive market share.</li>
+                        <br>
+                        <li><strong>Juilliard:</strong> Extremely selective admissions practices yield exceptional retention and graduation outcomes.</li>
+                        <br>
+                        <li><strong>Curtis:</strong> Even with ultra-selective admissions processes and guaranteed scholarships, small schools are still prone to wide swings in outcome metrics.</li>
+                        <br>
+                        <li><strong>NEC & MSM:</strong> Mid-sized conservatories with reasonable admissions standards have the most stable and consistent outcome trends.</li>
+                    </ul>
+                </div>
+
+                <!-- Individual School Dashboards -->
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎸 Berklee College of Music - Student Outcomes</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276243041' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Berklee Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Be&#47;BerkleeDash&#47;BerkleeDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='BerkleeDash&#47;BerkleeDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Be&#47;BerkleeDash&#47;BerkleeDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276243041');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎺 Manhattan School of Music - Student Outcomes</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276268581' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='MSM Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;MS&#47;MSMDash&#47;MSMDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='MSMDash&#47;MSMDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;MS&#47;MSMDash&#47;MSMDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276268581');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎻 New England Conservatory - Student Outcomes</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276304188' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='NEC Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;NE&#47;NECDash&#47;NECDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz'  style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='NECDash&#47;NECDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;NE&#47;NECDash&#47;NECDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276304188');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎭 The Juilliard School - Student Outcomes</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276373111' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Juilliard Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Ju&#47;JuilliardDash&#47;JuilliardDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz'  style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='JuilliardDash&#47;JuilliardDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Ju&#47;JuilliardDash&#47;JuilliardDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276373111');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎹 Curtis Institute of Music - Student Outcomes</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276395434' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Curtis Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Cu&#47;CurtisDash&#47;CurtisDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz'  style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='CurtisDash&#47;CurtisDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Cu&#47;CurtisDash&#47;CurtisDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276395434');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+            </section>
+
+            <!-- Section 3: Cost Comparisons -->
+            <section id="section3" class="section">
+                <h2>3. Cost Comparisons</h2>
+                
+                <p>The financial landscape of American music education faces unique challenges compared to other specialized colleges. Music schools rely heavily on donations and require significant investment into individual instruction, specialized facilities, and performance opportunities to support their students. Given the high variance in ROI on music degrees, conservatories are especially susceptible to inflation and weakening macroeconomic conditions.</p>
+
+                <div class="key-findings">
+                    <h4>Key Findings Overview</h4>
+                    <ul>
+                        <li>Before 2012, tuition costs for NEC, MSM, and Juilliard were all under $40,000. <strong>By 2022, all were well above $50,000.</strong></li>
+                        <br>
+                        <li>Scholarship-heavy models show that tuition costs can be mitigated, but this only works for smaller schools with substantial donor support.</li>
+                        <br>
+                        <li>Even with a subsidized tuition approach like Curtis's, high net prices for all schools reveal that studying music in major cities is becoming prohibitively expensive.</li>
+                        <br>
+                        <li>Tuition increases are outpacing both inflation and career prospects across the industry. <strong>If this trend continues, music education will be considered even more of a luxury for the wealthy few than it already is.</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Tuition Dashboards -->
+                <div id="section3-tuition" class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>📊 Tuition Trends Analysis A</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276451152' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Tuition A Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Tu&#47;TuitionADash&#47;TuitionADash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='TuitionADash&#47;TuitionADash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Tu&#47;TuitionADash&#47;TuitionADash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276451152');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>📊 Tuition Trends Analysis B</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276474042' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Tuition B Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Tu&#47;TuitionBDash&#47;TuitionBDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='TuitionBDash&#47;TuitionBDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Tu&#47;TuitionBDash&#47;TuitionBDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276474042');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div id="section3-netprice" class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>📊 Net Price Analysis</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276493141' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Avg Net Price Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Av&#47;AvgNetPriceDash&#47;AvgNetPriceDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='AvgNetPriceDash&#47;AvgNetPriceDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Av&#47;AvgNetPriceDash&#47;AvgNetPriceDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276493141');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+            </section>
+
+            <!-- Section 3.3: Individual School Costs -->
+            <section id="section3-3" class="section">
+                <h3>Individual School Costs</h3>
+                
+                <p>The following dashboards show a snapshot of each school's tuition cost and average net price for 2022.</p>
+
+                <div class="key-findings">
+                    <h4>Key Observations About Individual Schools</h4>
+                    <ul>
+                        <li><strong>Berklee:</strong> Despite market dominance and substantial growth, large institutions can choose to keep tuition prices accessible.</li>
+                        <br>
+                        <li><strong>Juilliard:</strong> Elite programs with strong brand recognition can command premium prices for now, but tuition growth of $35,140 to $52,500 over 10 years like Juilliard's necessitates career outcome transparency.</li>
+                        <br>
+                        <li><strong>Curtis:</strong> Guaranteed scholarships are an effective solution to rising tuition costs, but their efficacy is limited by the rampant cost of living crisis affecting major cities across the United States.</li>
+                        <br>
+                        <li><strong>NEC:</strong> Even with 45% tuition growth over ten years, larger conservatories like NEC can choose to take steps to lower net prices for their students.</li>
+                        <br>
+                        <li><strong>MSM:</strong> Violent swings in average net price caused by unforeseen events like the COVID-19 pandemic will continue to worsen until a sustainable model is widely adopted. <strong>For example, MSM's average net price dropped from $54,902 in 2019 to just $19,111 in 2020.</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Individual School Financial Dashboards -->
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎸 Berklee College of Music - Financial Analysis</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276515581' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Berklee $ Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Be&#47;BerkleeDash_17572619956180&#47;BerkleeDash_1&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='BerkleeDash_17572619956180&#47;BerkleeDash_1' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Be&#47;BerkleeDash_17572619956180&#47;BerkleeDash_1&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276515581');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎺 Manhattan School of Music - Financial Analysis</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276551675' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='MSM $ Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;MS&#47;MSMDash_17572620281780&#47;MSMDash_1&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='MSMDash_17572620281780&#47;MSMDash_1' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;MS&#47;MSMDash_17572620281780&#47;MSMDash_1&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276551675');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎻 New England Conservatory - Financial Analysis</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276594331' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='NEC $ Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;NE&#47;NECDash_17572620638160&#47;NECDash_1&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='NECDash_17572620638160&#47;NECDash_1' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;NE&#47;NECDash_17572620638160&#47;NECDash_1&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276594331');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎭 The Juilliard School - Financial Analysis</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276608719' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Juilliard $ Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Ju&#47;JuilliardDash_17572637306110&#47;JuilliardDash_1&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='JuilliardDash_17572637306110&#47;JuilliardDash_1' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Ju&#47;JuilliardDash_17572637306110&#47;JuilliardDash_1&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276608719');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>🎹 Curtis Institute of Music - Financial Analysis</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276626375' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Curtis $ Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Cu&#47;CurtisDash_17572634415670&#47;CurtisDash_1&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='CurtisDash_17572634415670&#47;CurtisDash_1' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Cu&#47;CurtisDash_17572634415670&#47;CurtisDash_1&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276626375');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+            </section>
+
+            <!-- Section 4: Enrollment -->
+            <section id="section4" class="section">
+                <h2>4. Enrollment Analysis</h2>
+                
+                <p>Like student outcomes and tuition costs, enrollment for American music schools has its fair share of eccentricities. Rather than discuss the strong implications of the enrollment data here, I'll save those insights for my overall conclusions presented in the next section. Besides, the final visualization comparing the enrollment numbers for all five institutions in 2022 is genuinely hilarious... and I'd hate to delay your enjoyment of that any longer than necessary.</p>
+
+                <div class="key-findings">
+                    <h4>Key Findings Overview</h4>
+                    <ul>
+                        <li><strong>One of these things is not like the others...</strong></li>
+                    </ul>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>📊 Enrollment Analysis A</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276660099' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Enrollment A Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;En&#47;EnrollmentADash&#47;EnrollmentADash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='EnrollmentADash&#47;EnrollmentADash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;En&#47;EnrollmentADash&#47;EnrollmentADash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276660099');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>📊 Enrollment Analysis B</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757276680506' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Enrollment B Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;En&#47;EnrollmentBDash&#47;EnrollmentBDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='EnrollmentBDash&#47;EnrollmentBDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;En&#47;EnrollmentBDash&#47;EnrollmentBDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757276680506');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+
+                <!-- Total Enrollment 2022 Dashboard (Original) -->
+                <div class="dashboard-container">
+                    <div class="dashboard-header">
+                        <h4>📊 Total Enrollment 2022</h4>
+                    </div>
+                    <div class='tableauPlaceholder' id='viz1757282252334' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt='Total Enrollment Dash'
+                                     src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;To&#47;TotalEnrollmentDash&#47;TotalEnrollmentDash&#47;1_rss.png'
+                                     style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz' style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+                            <param name='embed_code_version' value='3' />
+                            <param name='site_root' value='' />
+                            <param name='name' value='TotalEnrollmentDash&#47;TotalEnrollmentDash' />
+                            <param name='tabs' value='no' />
+                            <param name='toolbar' value='yes' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;To&#47;TotalEnrollmentDash&#47;TotalEnrollmentDash&#47;1.png' />
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-US' />
+                        </object>
+                    </div>
+                    <script type='text/javascript'>
+                        var divElement = document.getElementById('viz1757282252334');
+                        var vizElement = divElement.getElementsByTagName('object')[0];
+                        if (divElement.offsetWidth > 800) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else if (divElement.offsetWidth > 500) {
+                            vizElement.style.width='800px';
+                            vizElement.style.height='627px';
+                        } else {
+                            vizElement.style.width='100%';
+                            vizElement.style.height='727px';
+                        }
+                        var scriptElement = document.createElement('script');
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+                    </script>
+                </div>
+            </section>
+
+            <!-- Section 5: Conclusion -->
+            <section id="section5" class="section">
+                <h2>5. Conclusions & Implications</h2>
+                
+                <p>Before discussing the implications of my findings, I want to reiterate that the main goal of this report was to objectively examine any emerging enrollment and financial trends within five of America's elite music conservatories. While I suspected the financial data in particular would not paint a flattering picture of the music education landscape, shedding light on this uncomfortable truth was not my prime directive. All of that said, let's dive into what all these numbers actually mean.</p>
+
+                <h3>There is an Active Financial Crisis in Music Education</h3>
+
+                <p>The key word here is <em><strong>active</strong></em>. This is no longer a looming, possible, or potential issue. The majority of the financial data clearly shows unsustainable growth in tuition costs happening in real time. In just 10 years:</p>
+                
+                <ul>
+                    <li><strong>New England Conservatory's tuition grew from $38,455 to $55,910 (+45.4%)</strong></li>
+                    <br>
+                    <li><strong>Juilliard's tuition grew from $35,140 to $52,500 (+49.4%)</strong></li>
+                    <br>
+                    <li><strong>MSM's tuition grew from $35,140 to $52,550 (+49.5%)</strong></li>
+                </ul>
+
+                <p>What makes these increases so concerning is that they're not driven by improved career prospects or measurable increases in ROI for graduates. <strong>Even Berklee's tuition grew from $36,490 to $48,330 (+32.4%) during that same period</strong>, but I'll get into why that is much less problematic momentarily.</p>
+
+                <p>The one inarguable source of optimism in the financial data is the success of Curtis's financial model. Their guaranteed scholarship approach demonstrates a truly viable alternative to funding music education at the elite level. However, even with Curtis providing full scholarships, the net price data reveals a critical insight: total education costs are skyrocketing due to unprecedented living expenses in America's major cities.</p>
+
+                <p>After dropping from $11,546 in 2012 to $2,584 in 2013, <strong>Curtis's average net price increased by $25,362 (+981.5%) to a value of $27,946 in 2022.</strong></p>
+
+                <p>Curtis's net price fluctuations unfortunately confirm that even heavily subsidized education is not enough to fully address the growing financial accessibility problem in music education.</p>
+
+                <h3>Market Evolution and Institutional Divergence</h3>
+
+                <p>There is something darkly ironic about publishing this report on the same day the Bureau of Labor Statistics announced a <a href="https://www.reuters.com/business/us-payrolls-benchmark-revision-estimate-suggests-labor-market-weaker-than-2025-09-09/" target="_blank" rel="noopener noreferrer">downward revision of 911,000 jobs</a> for the reporting period of April 2024 to March 2025. It ties perfectly back into my criticisms of rising tuition costs without improved career prospects discussed in the previous section. <strong>Music students are already under enough pressure as it is.</strong> Unless institutions are actively working towards improving their career services and student support, <strong>rising tuition costs feel more like exploitation than "competitive pricing"</strong>. Thankfully, there is at least one school that seems to be taking this problem seriously.</p>
+
+                <p>Berklee's explosive growth is a direct result of the growing surge in the current market's appetite for contemporary music education. This should hardly be a surprise to anyone paying close attention to the music industry over the past decade, but part of the reasoning is remarkably simple. The democratization of music production in recent years has resulted in an unfathomable amount of new music being created. In fact, according to an <a href="https://musictech.com/news/industry/more-music-released-in-a-day-in-2024-than-entirety-of-1989/" target="_blank" rel="noopener noreferrer">article from MusicTech.com</a>, <strong>more music was released daily in 2024 than in all of 1989 combined.</strong></p>
+
+                <p>Even if you don't end up being a performer or teacher, Berklee's emphasis on transferrable, technical skills opens doors to A/V production jobs as well as other technical fields. This is reflected in their complete and utter domination of the enrollment market share and confirms that careers in music are skewing heavily towards modern tastes. <strong>In short, if you graduate from Berklee, you have a very good chance of getting a job.</strong></p>
+
+                <p>On the other end of the spectrum, traditional conservatories face declining enrollment as classical music careers offer limited practical applications beyond teaching. The COVID-19 pandemic accelerated these trends by disrupting live performance opportunities that are crucial components of classical training. Large-scale productions like operas, which require semester-long preparation for just a few performances, became impossible to sustain. This further highlights the vulnerability of traditional classical education models compared to contemporary programs that are both more adaptable and affordable.</p>
+
+                <h3>Final Thoughts</h3>
+
+                <p>Looking ahead, the music education landscape is crystallizing into two distinct models:</p>
+                    
+                    <ul>
+                        <li><strong>Large contemporary institutions like Berklee (and to a lesser extent MSM & NEC) that embrace modern genres and support consistent career pathways.</strong></li>
+                        <br>
+                        <li><strong>Small, elite conservatories like Curtis and Juilliard that maintain traditional excellence through extremely selective admissions processes.</strong></li>
+                </ul>
+
+                <p>Schools caught between these two models will undoubtedly struggle to survive the economic uncertainty of the near future. They will need to either develop their own survival strategies or partner with a larger institution. Thankfully, successful affiliation agreements like those between Boston Conservatory and Berklee, as well as Longy and Bard College, show that academic mergers can be mutually beneficial.</p>
+                
+                <p>For prospective students, the message is clear: <strong>follow the money</strong>. I'm not saying that you shouldn't have a "dream school" or anything like that, but the economic factors in choosing where to study are now the most important things to consider. <strong>If you get a scholarship to your second or third choice school, that is where you should go.</strong></p>
+                
+                <p>For educators and administrators, I'd imagine I'm preaching to the choir here. You are likely already aware of the accessibility crisis and financial issues plaguing music education. The best thing you can do is continue to advocate for more affordable tuition and better career support for your students. The louder your voice, and the more data you have backing your claims, the more likely you are to be heard.</p>
+                
+                <p>One more time for the back of the house: <strong>the current trend of extreme cost increases without significant improvements in career prospects is unsustainable and borderline exploitative.</strong> Until sweeping changes are adopted across the country, enrollment will continue to decline or skew towards institutions focusing on solutions to these modern problems.</p>
+                
+                <p>Like John F. Kennedy famously said in his remarks at Amherst College in 1963:</p>
+
+                <p><strong>“The life of the arts, far from being an interruption, a distraction, in the life of a nation, is very close to the center of a nation’s purpose... and is a test of the quality of a nation’s civilization.”</strong></p>
+                
+                <p>I still believe that at its core, America is a civilized nation of great quality.</p>
+
+                <p>Let's hope I'm right.</p>
+            </section>
+
+            <div class="data-source">
+                <p>
+                    <strong>Data Source:</strong> U.S. Department of Education College Scorecard API<br>
+                    <strong>Analysis Period:</strong> 2012-2022<br>
+                    <strong>Author:</strong> Sean Currlin</p>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <div class="footer-content">
+                <p class="copyright">
+                    Copyright © 2025 Sean Currlin
+                </p>
+                <div class="socials">
+                    <a href="https://linkedin.com/in/seancurrlin" target="_blank" rel="noopener noreferrer" class="social-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                    <a href="https://github.com/Scurrlin" target="_blank" rel="noopener noreferrer" class="social-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="https://open.spotify.com/artist/1yes1OaMmV9w58iMeggawH" target="_blank" rel="noopener noreferrer" class="social-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Tableau JavaScript -->
+    <script type='text/javascript'>
+        // Function to initialize a Tableau dashboard
+        function initTableauViz(vizId) {
+            var divElement = document.getElementById(vizId);
+            if (divElement) {
+                var vizElement = divElement.getElementsByTagName('object')[0];
+                if (divElement.offsetWidth > 800) { 
+                    vizElement.style.width = '100%';
+                    vizElement.style.height = '627px';
+                } else if (divElement.offsetWidth > 500) { 
+                    vizElement.style.width = '100%';
+                    vizElement.style.height = '627px';
+                } else { 
+                    vizElement.style.width = '100%';
+                    vizElement.style.height = '727px';
+                }
+                
+                var scriptElement = document.createElement('script');
+                scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+                vizElement.parentNode.insertBefore(scriptElement, vizElement);
+            }
+        }
+        
+        // Initialize all Tableau dashboards
+        var dashboardIds = [
+            'viz1757276102353',  // Acceptance Rate
+            'viz1757276138501',  // Retention Rate
+            'viz1757276208403',  // Graduation Rate
+            'viz1757276243041',  // Berklee 2022 Outcomes
+            'viz1757276268581',  // MSM 2022 Outcomes
+            'viz1757276304188',  // NEC 2022 Outcomes
+            'viz1757276373111',  // Juilliard 2022 Outcomes
+            'viz1757276395434',  // Curtis 2022 Outcomes
+            'viz1757276451152',  // Tuition w/o Curtis
+            'viz1757276474042',  // Tuition (All institutions)
+            'viz1757276493141',  // Average Net Price
+            'viz1757276515581',  // Berklee 2022 Cost Comparisons
+            'viz1757276551675',  // MSM 2022 Cost Comparisons
+            'viz1757276594331',  // NEC 2022 Cost Comparisons
+            'viz1757276608719',  // Juilliard 2022 Cost Comparisons
+            'viz1757276626375',  // Curtis 2022 Cost Comparisons
+            'viz1757276660099',  // Enrollment w/o Berklee
+            'viz1757276680506',  // Enrollment (All institutions)
+            'viz1757282252334'   // Total Enrollment 2022
+        ];
+        
+        // Initialize all dashboards when page loads
+        dashboardIds.forEach(function(id) {
+            initTableauViz(id);
+        });
+    </script>
+    
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
