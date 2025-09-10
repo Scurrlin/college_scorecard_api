@@ -384,6 +384,8 @@ body {
         height: 727px;
         overflow: auto;
         border-radius: 0 0 8px 8px;
+        line-height: 0;
+        font-size: 0;
     }
     
     .mobile-static-image img {
