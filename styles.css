@@ -321,6 +321,11 @@ body {
     filter: brightness(0) saturate(100%) invert(47%) sepia(94%) saturate(1318%) hue-rotate(184deg) brightness(98%) contrast(93%);
 }
 
+/* Hide mobile static images on desktop */
+.mobile-static-image {
+    display: none;
+}
+
 /* Mobile Optimizations */
 @media (max-width: 450px) {
     body {
@@ -374,14 +379,14 @@ body {
     }
     
     /* Show static images on mobile */
-    .tableauPlaceholder noscript {
+    .mobile-static-image {
         display: block !important;
         height: 500px;
         overflow: auto;
         border-radius: 0 0 8px 8px;
     }
     
-    .tableauPlaceholder noscript img {
+    .mobile-static-image img {
         width: auto;
         height: auto;
         min-width: 800px;
