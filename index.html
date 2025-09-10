@@ -1100,25 +1100,39 @@ if __name__ == "__main__":
                 var divElement = document.getElementById(vizId);
                 if (divElement) {
                     var vizElement = divElement.getElementsByTagName('object')[0];
-                    if (divElement.offsetWidth > 800) { 
-                        vizElement.style.width = '800px';
-                        vizElement.style.height = '627px';
-                    } else if (divElement.offsetWidth > 500) { 
-                        vizElement.style.width = '800px';
-                        vizElement.style.height = '627px';
-                    } else { 
-                        vizElement.style.width = '100%';
-                        vizElement.style.height = '727px';
+                    if (vizElement) {
+                        // Set responsive dimensions
+                        if (divElement.offsetWidth > 800) { 
+                            vizElement.style.width = '800px';
+                            vizElement.style.height = '627px';
+                        } else if (divElement.offsetWidth > 500) { 
+                            vizElement.style.width = '800px';
+                            vizElement.style.height = '627px';
+                        } else { 
+                            vizElement.style.width = '100%';
+                            vizElement.style.height = '727px';
+                        }
+                        
+                        // Make the object visible and functional
+                        vizElement.style.display = 'block';
                     }
                 }
             });
         }
         
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initTableauDashboards);
+        // Initialize when page loads (only on desktop)
+        window.addEventListener('load', function() {
+            if (window.innerWidth > 768) {
+                initTableauDashboards();
+            }
+        });
         
         // Re-initialize on window resize (for responsive behavior)
-        window.addEventListener('resize', initTableauDashboards);
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                setTimeout(initTableauDashboards, 100);
+            }
+        });
     </script>
     
     <!-- Prism.js for syntax highlighting -->

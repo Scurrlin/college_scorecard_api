@@ -378,16 +378,33 @@ body {
     }
     
     .tableauPlaceholder noscript img {
-        width: 100% !important;
+        width: auto !important;
         height: auto !important;
         max-width: none !important;
+        min-width: 600px !important;
         border: 1px solid #e0e0e0;
         border-radius: 0 0 8px 8px;
     }
     
-    /* Ensure dashboard containers can scroll if needed */
+    /* Ensure dashboard containers can scroll to show full images */
     .dashboard-container {
         overflow-x: auto;
-        overflow-y: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Desktop: Ensure Tableau objects are visible and interactive */
+@media (min-width: 769px) {
+    .tableauPlaceholder {
+        display: block !important;
+    }
+    
+    .tableauPlaceholder noscript {
+        display: none !important;
+    }
+    
+    .tableauViz {
+        display: block !important;
     }
 }
