@@ -369,7 +369,7 @@ body {
     }
     
     /* Mobile: Show static images instead of interactive dashboards */
-    .tableauPlaceholder {
+    .tableauViz {
         display: none !important;
     }
     
@@ -378,33 +378,21 @@ body {
     }
     
     .tableauPlaceholder noscript img {
-        width: auto !important;
-        height: auto !important;
-        max-width: none !important;
-        min-width: 600px !important;
+        width: 100%;
+        height: auto;
+        max-width: none;
         border: 1px solid #e0e0e0;
-        border-radius: 0 0 8px 8px;
+        border-radius: 4px;
     }
     
-    /* Ensure dashboard containers can scroll to show full images */
+    /* Add scrollable container for dashboard images on mobile */
     .dashboard-container {
         overflow-x: auto;
-        overflow-y: visible;
-        -webkit-overflow-scrolling: touch;
+        overflow-y: hidden;
     }
-}
-
-/* Desktop: Ensure Tableau objects are visible and interactive */
-@media (min-width: 769px) {
+    
     .tableauPlaceholder {
-        display: block !important;
-    }
-    
-    .tableauPlaceholder noscript {
-        display: none !important;
-    }
-    
-    .tableauViz {
-        display: block !important;
+        min-width: 800px; /* Ensure dashboards maintain their designed width */
+        overflow: visible;
     }
 }
