@@ -321,39 +321,50 @@ body {
     filter: brightness(0) saturate(100%) invert(47%) sepia(94%) saturate(1318%) hue-rotate(184deg) brightness(98%) contrast(93%);
 }
 
-/* Mobile Landscape Mode Optimizations */
-@media screen and (max-height: 450px) and (min-width: 600px) and (orientation: landscape) {
-    .dashboard-container {
-        margin: 15px 0;
-        border-radius: 4px;
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    body {
+        font-size: 0.9em;
+        line-height: 1.6;
     }
     
-    .dashboard-header {
-        padding: 10px 15px;
+    .header {
+        padding: 40px 20px;
     }
     
-    .dashboard-header h4 {
-        font-size: 1em;
+    .header h1 {
+        font-size: 2em;
     }
     
-    /* Ensure Tableau dashboards use full available width with scrolling */
-    .tableauPlaceholder {
-        width: 100% !important;
-        max-width: none !important;
-        overflow: auto !important;
+    .header .subtitle {
+        font-size: 1.1em;
     }
     
-    .tableauViz {
-        width: 100% !important;
-        max-width: none !important;
-        overflow: visible !important;
+    .content {
+        padding: 20px;
     }
     
-    /* Ensure the embedded object/iframe maintains interactivity */
-    .tableauViz object,
-    .tableauViz iframe {
-        width: 100% !important;
-        min-height: 627px !important;
-        overflow: auto !important;
+    .section h2 {
+        font-size: 1.6em;
+    }
+    
+    .section h3 {
+        font-size: 1.3em;
+    }
+    
+    .section h4 {
+        font-size: 1.1em;
+    }
+    
+    .toc {
+        padding: 20px;
+    }
+    
+    .methodology {
+        padding: 20px;
+    }
+    
+    .key-findings {
+        padding: 15px;
     }
 }
