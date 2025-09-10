@@ -336,14 +336,24 @@ body {
         font-size: 1em;
     }
     
-    /* Ensure Tableau dashboards use full available width */
+    /* Ensure Tableau dashboards use full available width with scrolling */
     .tableauPlaceholder {
         width: 100% !important;
         max-width: none !important;
+        overflow: auto !important;
     }
     
     .tableauViz {
         width: 100% !important;
         max-width: none !important;
+        overflow: visible !important;
+    }
+    
+    /* Ensure the embedded object/iframe maintains interactivity */
+    .tableauViz object,
+    .tableauViz iframe {
+        width: 100% !important;
+        min-height: 627px !important;
+        overflow: auto !important;
     }
 }
