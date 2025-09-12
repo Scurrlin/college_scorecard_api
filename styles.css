@@ -355,6 +355,10 @@ body {
         line-height: 1.6;
     }
     
+    .footer-center {
+        order: 3;
+    }
+    
     .header {
         padding: 40px 20px;
     }
