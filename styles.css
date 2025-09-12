@@ -279,6 +279,10 @@ body {
         flex-direction: row;
         gap: 16px;
     }
+    
+    .footer-center {
+        order: 2;
+    }
 }
 
 .footer-left {
