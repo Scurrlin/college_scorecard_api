@@ -291,9 +291,6 @@ body {
     }
 }
 
-.footer-center {
-    order: 3;
-}
 
 .back-to-top {
     color: white;
@@ -353,6 +350,12 @@ body {
 }
 
 /* Mobile Optimizations */
+@media (max-width: 640px) {
+    .footer-center {
+        order: 3;
+    }
+}
+
 @media (max-width: 450px) {
     body {
         font-size: 0.9em;
