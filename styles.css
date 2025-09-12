@@ -283,6 +283,10 @@ body {
     .footer-center {
         order: 2;
     }
+    
+    .socials {
+        order: 3;
+    }
 }
 
 .footer-left {
