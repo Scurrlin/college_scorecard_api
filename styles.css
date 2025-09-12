@@ -37,6 +37,8 @@ body {
 
 .content {
     padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .toc {
@@ -98,11 +100,13 @@ body {
 }
 
 .dashboard-container {
-    margin: 30px 0;
+    margin: 30px auto;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 800px;
+    max-width: 100%;
 }
 
 .dashboard-header {
