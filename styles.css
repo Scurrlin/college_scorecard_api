@@ -315,6 +315,11 @@ body {
     height: 100%;
 }
 
+/* Hide static images on desktop */
+.mobile-static-image {
+    display: none;
+}
+
 /* Mobile Optimizations */
 @media (max-width: 450px) {
     body {
@@ -362,18 +367,12 @@ body {
         padding: 15px;
     }
     
-    /* ============================================
-       STATIC IMAGE FALLBACK ON MOBILE (NOT IN USE)
-       ============================================ 
-    
-    .mobile-static-image {
-        display: none;
-    }
-    
+    /* Hide dashboards on mobile */
     .tableauViz {
         display: none !important;
     }
     
+    /* Show static images on mobile */
     .mobile-static-image {
         display: block !important;
         height: 627px;
@@ -388,5 +387,4 @@ body {
         display: block;
         border-radius: 0;
     }
-    */
 }
