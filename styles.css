@@ -291,6 +291,10 @@ body {
     }
 }
 
+.footer-center {
+    order: 3;
+}
+
 .back-to-top {
     color: white;
     text-decoration: none;
@@ -353,10 +357,6 @@ body {
     body {
         font-size: 0.9em;
         line-height: 1.6;
-    }
-    
-    .footer-center {
-        order: 3;
     }
     
     .header {
