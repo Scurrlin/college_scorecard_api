@@ -141,7 +141,7 @@ body {
     margin: 30px 0;
 }
 
-/* Center Curtis when grid has 2+ columns (5th item) */
+/* Center Curtis profile when grid has 2 columns */
 @media (min-width: 660px) {
     .school-grid .school-card:nth-child(5) {
         grid-column: 1 / -1;
@@ -385,7 +385,7 @@ body {
     /* Show static images on mobile */
     .mobile-static-image {
         display: block !important;
-        height: 727px;
+        height: 627px;
         overflow: auto;
         border-radius: 0 0 8px 8px;
     }
