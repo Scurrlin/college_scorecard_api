@@ -1,13 +1,4 @@
-// Check if mobile
-function isMobileDevice() {
-    return window.innerWidth <= 450;
-}
-
 function initTableauViz(vizId) {
-    // Show static images on mobile
-    if (isMobileDevice()) {
-        return;
-    }
     
     const divElement = document.getElementById(vizId);
     if (divElement) {

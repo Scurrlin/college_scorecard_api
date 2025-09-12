@@ -315,21 +315,6 @@ body {
     height: 100%;
 }
 
-.portfolio-icon img {
-    width: 24px;
-    height: 24px;
-    filter: brightness(0) saturate(100%) invert(59%) sepia(11%) saturate(297%) hue-rotate(169deg) brightness(95%) contrast(90%);
-}
-
-.portfolio-icon:hover img {
-    filter: brightness(0) saturate(100%) invert(47%) sepia(94%) saturate(1318%) hue-rotate(184deg) brightness(98%) contrast(93%);
-}
-
-/* Hide static images on desktop */
-.mobile-static-image {
-    display: none;
-}
-
 /* Mobile Optimizations */
 @media (max-width: 450px) {
     body {
@@ -377,12 +362,18 @@ body {
         padding: 15px;
     }
     
-    /* Hide dashboards on mobile */
+    /* ============================================
+       STATIC IMAGE FALLBACK ON MOBILE (NOT IN USE)
+       ============================================ 
+    
+    .mobile-static-image {
+        display: none;
+    }
+    
     .tableauViz {
         display: none !important;
     }
     
-    /* Show static images on mobile */
     .mobile-static-image {
         display: block !important;
         height: 627px;
@@ -397,4 +388,5 @@ body {
         display: block;
         border-radius: 0;
     }
+    */
 }
