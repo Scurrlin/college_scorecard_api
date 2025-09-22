@@ -53,18 +53,16 @@ function copyCode(button, codeId) {
     const codeElement = document.getElementById(codeId);
     if (codeElement) {
         const code = codeElement.textContent;
-        function showCopiedState() {
+        
+        navigator.clipboard.writeText(code).then(function() {
             const originalText = button.innerHTML;
             button.innerHTML = '<svg class="copy-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Copied!';
             button.classList.add('copied');
+            
             setTimeout(function() {
                 button.innerHTML = originalText;
                 button.classList.remove('copied');
             }, 2000);
-        }
-        
-        navigator.clipboard.writeText(code).then(function() {
-            showCopiedState();
         }).catch(function(err) {
             console.error('Failed to copy text: ', err);
             const textArea = document.createElement('textarea');
@@ -72,8 +70,16 @@ function copyCode(button, codeId) {
             document.body.appendChild(textArea);
             textArea.select();
             document.execCommand('copy');
-            document.body.removeChild(textArea);   
-            showCopiedState();
+            document.body.removeChild(textArea);
+            
+            const originalText = button.innerHTML;
+            button.innerHTML = '<svg class="copy-icon" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Copied!';
+            button.classList.add('copied');
+            
+            setTimeout(function() {
+                button.innerHTML = originalText;
+                button.classList.remove('copied');
+            }, 2000);
         });
     }
 }
