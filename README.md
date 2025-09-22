@@ -2,7 +2,7 @@
 
 This report uses data from the U.S. Department of Education's College Scorecard API to analyze key metrics for top music conservatories from 2012-2022.
 
-## 🎼 Featured Schools
+## Featured Schools
 
 - **Berklee College of Music**
 - **The Juilliard School** 
