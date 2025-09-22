@@ -95,9 +95,6 @@ def main():
     
     long_df = pd.concat(frames, ignore_index=True)
     
-    if long_df.empty:
-        raise SystemExit("Error: No data to process after concatenation.")
-
     # Convert select fields to percentages
     percentage_fields = ["admission_rate", "retention_rate_ft", "grad_rate_150"]
     for c in percentage_fields:
@@ -110,36 +107,17 @@ def main():
                     # Convert to percentage and round to 2 decimal places
                     long_df[c] = (s * 100).round(2)
                 else:
-                    # Already in percentage format, just round to 2 decimal places
+                    # If already in percentage format, just round to 2 decimal places
                     long_df[c] = s.round(2)
 
-    try:
-        wide_df = long_df.pivot_table(
-            index=["institution", "unitid", "year"],
-            values=list(FIELD_MAP.keys()),
-            aggfunc="first"
-        ).reset_index()
-    except Exception as e:
-        print(f"Warning: Error creating pivot table: {e}")
-        print("Proceeding with long format only.")
-        wide_df = None
-
-    # Generate filenames
+    sorted_df = long_df.sort_values(['institution', 'year']).reset_index(drop=True)
     year_range = f"{min(YEARS)}_{max(YEARS)}"
     timestamp = datetime.now().strftime("%Y%m%d")
+    filename = f"music_school_data_{year_range}_{timestamp}.csv"
     
-    long_filename = f"music_school_long_{year_range}_{timestamp}.csv"
-    wide_filename = f"music_school_wide_{year_range}_{timestamp}.csv"
-    
-    # Save files
-    long_df.to_csv(long_filename, index=False)
-    print(f"Saved long format: {long_filename} ({len(long_df)} rows, {len(long_df['institution'].unique())} institutions)")
-    
-    if wide_df is not None:
-        wide_df.to_csv(wide_filename, index=False)
-        print(f"Saved wide format: {wide_filename} ({len(wide_df)} rows)")
-    
-    return long_df, wide_df
+    sorted_df.to_csv(filename, index=False)
+    print(f"Saved data: {filename} ({len(sorted_df)} rows, {len(sorted_df['institution'].unique())} institutions)")
+    return sorted_df
 
 if __name__ == "__main__":
     try:
