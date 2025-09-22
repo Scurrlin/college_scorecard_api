@@ -83,7 +83,7 @@
                 <div class="methodology">
                     <h4>Data Collection</h4>
                     
-                    <p>I used a custom Python script <strong>(api_to_csv.py)</strong> to extract the following data for all five institutions. You can view the code for said script by clicking the button below.</p>
+                    <p>I used a Python script <strong>(api_to_csv.py)</strong> to extract the following data for all five institutions. I also included another script <strong>(api_to_sql.py)</strong> to extract the data and store it in a SQLite database. You can view the code for both scripts by clicking the buttons below.</p>
                     
                     <ul>
                         <li><strong>Acceptance Rate:</strong> The percentage of applicants who were admitted in a given year (admissions.admission_rate.overall).</li>
@@ -101,8 +101,7 @@
                     
                     <details class="code-section">
                         <summary>📄 api_to_csv.py</summary>
-                        <pre><code class="language-python">
-import os
+                        <pre><code class="language-python">import os
 import requests
 import pandas as pd
 from datetime import datetime
