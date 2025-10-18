@@ -33,11 +33,8 @@ const dashboardIds = [
     'viz1757276451152',  // Tuition w/o Curtis
     'viz1757276474042',  // Tuition (All institutions)
     'viz1757276493141',  // Average Net Price
-    'viz1757276515581',  // Berklee 2022 Cost Comparison
-    'viz1757276551675',  // MSM 2022 Cost Comparison
-    'viz1757276594331',  // NEC 2022 Cost Comparison
-    'viz1757276608719',  // Juilliard 2022 Cost Comparison
-    'viz1757276626375',  // Curtis 2022 Cost Comparison
+    'viz1760761455229',  // Tuition Cost 2022
+    'viz1760761344501',  // Net Price 2022
     'viz1757276660099',  // Enrollment w/o Berklee
     'viz1757276680506',  // Enrollment (All institutions)
     'viz1757282252334'   // Total Enrollment 2022
